@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neon Calculator</title>
+
+    <link rel="icon" href="image/neon-icon.png" type="image/png">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: #000000;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .calculator {
+            background: #1a1a1a;
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 0 50px rgba(0, 255, 255, 0.3);
+            border: 2px solid #333;
+        }
+
+        .display {
+            width: 100%;
+            height: 80px;
+            background: #0a0a0a;
+            border: 2px solid #00ffff;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            padding: 20px;
+            text-align: right;
+            font-size: 2.5em;
+            color: #00ffff;
+            text-shadow: 0 0 10px #00ffff;
+            overflow: hidden;
+            word-wrap: break-word;
+        }
+
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+        }
+
+        button {
+            padding: 25px;
+            font-size: 1.5em;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+        }
+
+        button:active {
+            transform: scale(0.95);
+        }
+
+        /* Number buttons - Cyan/Aqua glow */
+        .btn-number {
+            background: #1a1a1a;
+            color: #00ffff;
+            border: 2px solid #00ffff;
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
+        }
+
+        .btn-number:hover {
+            background: #00ffff;
+            color: #000;
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.8);
+        }
+
+        /* Operator buttons - Pink/Magenta glow */
+        .btn-operator {
+            background: #1a1a1a;
+            color: #ff00ff;
+            border: 2px solid #ff00ff;
+            box-shadow: 0 0 15px rgba(255, 0, 255, 0.5);
+        }
+
+        .btn-operator:hover {
+            background: #ff00ff;
+            color: #000;
+            box-shadow: 0 0 30px rgba(255, 0, 255, 0.8);
+        }
+
+        /* Clear button - Red glow */
+        .btn-clear {
+            background: #1a1a1a;
+            color: #ff0066;
+            border: 2px solid #ff0066;
+            box-shadow: 0 0 15px rgba(255, 0, 102, 0.5);
+        }
+
+        .btn-clear:hover {
+            background: #ff0066;
+            color: #000;
+            box-shadow: 0 0 30px rgba(255, 0, 102, 0.8);
+        }
+
+        /* Equals button - Green glow */
+        .btn-equals {
+            background: #1a1a1a;
+            color: #00ff00;
+            border: 2px solid #00ff00;
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
+            grid-column: span 2;
+        }
+
+        .btn-equals:hover {
+            background: #00ff00;
+            color: #000;
+            box-shadow: 0 0 30px rgba(0, 255, 0, 0.8);
+        }
+
+        /* Delete button - Orange glow */
+        .btn-delete {
+            background: #1a1a1a;
+            color: #ff9900;
+            border: 2px solid #ff9900;
+            box-shadow: 0 0 15px rgba(255, 153, 0, 0.5);
+        }
+
+        .btn-delete:hover {
+            background: #ff9900;
+            color: #000;
+            box-shadow: 0 0 30px rgba(255, 153, 0, 0.8);
+        }
+
+        .title {
+            text-align: center;
+            color: #00ffff;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            text-shadow: 0 0 20px #00ffff;
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <h2 class="title">NEON CALCULATOR</h2>
+        <div class="display" id="display">0</div>
+        <div class="buttons">
+            <button class="btn-clear" onclick="clearDisplay()">C</button>
+            <button class="btn-delete" onclick="deleteChar()">DEL</button>
+            <button class="btn-operator" onclick="appendToDisplay('/')">/</button>
+            <button class="btn-operator" onclick="appendToDisplay('*')">×</button>
+            
+            <button class="btn-number" onclick="appendToDisplay('7')">7</button>
+            <button class="btn-number" onclick="appendToDisplay('8')">8</button>
+            <button class="btn-number" onclick="appendToDisplay('9')">9</button>
+            <button class="btn-operator" onclick="appendToDisplay('-')">-</button>
+            
+            <button class="btn-number" onclick="appendToDisplay('4')">4</button>
+            <button class="btn-number" onclick="appendToDisplay('5')">5</button>
+            <button class="btn-number" onclick="appendToDisplay('6')">6</button>
+            <button class="btn-operator" onclick="appendToDisplay('+')">+</button>
+            
+            <button class="btn-number" onclick="appendToDisplay('1')">1</button>
+            <button class="btn-number" onclick="appendToDisplay('2')">2</button>
+            <button class="btn-number" onclick="appendToDisplay('3')">3</button>
+            <button class="btn-operator" onclick="appendToDisplay('%')">%</button>
+            
+            <button class="btn-number" onclick="appendToDisplay('0')">0</button>
+            <button class="btn-number" onclick="appendToDisplay('.')">.</button>
+            <button class="btn-equals" onclick="calculate()">=</button>
+        </div>
+    </div>
+
+    <script>
+        let display = document.getElementById('display');
+        let currentInput = '0';
+        let resultDisplayed = false;
+
+        function appendToDisplay(value) {
+            if (currentInput === '0' || resultDisplayed) {
+                if (value === '.' && currentInput === '0') {
+                    currentInput = '0.';
+                } else if (value !== '.') {
+                    currentInput = value;
+                } else {
+                    // Previne a adição de ponto decimal no início após um resultado
+                    currentInput += value;
+                }
+                resultDisplayed = false;
+            } else {
+                // Previne múltiplos pontos decimais em um único número (entre operadores)
+                const lastNumber = currentInput.split(/[\+\-\*\/\%]/).pop();
+                if (value === '.' && lastNumber.includes('.')) {
+                    return;
+                }
+                currentInput += value;
+            }
+            updateDisplay();
+        }
+
+        function clearDisplay() {
+            currentInput = '0';
+            updateDisplay();
+        }
+
+        function deleteChar() {
+            if (currentInput.length > 1) {
+                currentInput = currentInput.slice(0, -1);
+            } else {
+                currentInput = '0';
+            }
+            updateDisplay();
+        }
+
+        function calculate() {
+            try {
+                // Substitui '×' por '*' para o eval
+                let expression = currentInput.replace(/×/g, '*');
+                
+                // Avalia a expressão
+                // *ATENÇÃO: O uso de eval() é desencorajado em produção por questões de segurança.*
+                let result = eval(expression);
+                
+                // Limita o número de casas decimais para evitar problemas de ponto flutuante
+                if (result % 1 !== 0) {
+                    result = parseFloat(result.toFixed(8));
+                }
+                
+                currentInput = result.toString();
+                resultDisplayed = true;
+                updateDisplay();
+            } catch (error) {
+                currentInput = 'Error';
+                updateDisplay();
+                setTimeout(() => {
+                    currentInput = '0';
+                    updateDisplay();
+                }, 1500);
+            }
+        }
+
+        function updateDisplay() {
+            display.textContent = currentInput;
+        }
+
+        // Suporte a teclado
+        document.addEventListener('keydown', function(event) {
+            const key = event.key;
+            
+            if (key >= '0' && key <= '9') {
+                appendToDisplay(key);
+            } else if (key === '.') {
+                appendToDisplay('.');
+            } else if (key === '+' || key === '-' || key === '*' || key === '/') {
+                appendToDisplay(key);
+            } else if (key === '%') {
+                 // Trata o '%' como um operador
+                appendToDisplay('%');
+            } else if (key === 'Enter' || key === '=') {
+                event.preventDefault(); // Evita a ação padrão do 'Enter'
+                calculate();
+            } else if (key === 'Escape' || key === 'c' || key === 'C') {
+                clearDisplay();
+            } else if (key === 'Backspace') {
+                event.preventDefault(); // Evita a navegação de página
+                deleteChar();
+            }
+        });
+    </script>
+</body>
+</html>
